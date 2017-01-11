@@ -1,4 +1,4 @@
-package com.nosmurfs.lightgaro.view;
+package com.nosmurfs.lightgaro.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

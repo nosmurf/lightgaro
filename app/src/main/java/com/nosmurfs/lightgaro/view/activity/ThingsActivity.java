@@ -1,13 +1,17 @@
-package com.nosmurfs.lightgaro.view;
+package com.nosmurfs.lightgaro.view.activity;
 
 import com.nosmurfs.lightgaro.R;
 import com.nosmurfs.lightgaro.presenter.Presenter;
+import com.nosmurfs.lightgaro.view.activity.RootActivity;
 
 /**
  * Created by Sergio on 11/01/2017.
  */
 
 public class ThingsActivity extends RootActivity {
+
+
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_things;
