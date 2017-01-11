@@ -27,10 +27,10 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     @Override
     public void destroy() {
-
+        // TODO: 11/01/2017
     }
 
     public interface View extends Presenter.View{
-
+        // TODO: 11/01/2017  
     }
 }

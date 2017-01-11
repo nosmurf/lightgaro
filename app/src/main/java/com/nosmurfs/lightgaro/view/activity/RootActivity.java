@@ -1,11 +1,12 @@
 package com.nosmurfs.lightgaro.view.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.nosmurfs.lightgaro.presenter.Presenter;
 
-public abstract class RootActivity extends AppCompatActivity {
+public abstract class RootActivity extends AppCompatActivity implements Presenter.View{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,5 +41,35 @@ public abstract class RootActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         getPresenter().destroy();
+    }
+
+    @Override
+    public void showError(String message) {
+        // TODO: 11/01/2017
+    }
+
+    @Override
+    public void showError(int messageId) {
+        // TODO: 11/01/2017
+    }
+
+    @Override
+    public void showProgress(String message) {
+        // TODO: 11/01/2017
+    }
+
+    @Override
+    public void showProgress(int messageId) {
+        // TODO: 11/01/2017
+    }
+
+    @Override
+    public void hideProgress() {
+        // TODO: 11/01/2017
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 }
