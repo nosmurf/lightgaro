@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:background="@drawable/relay"
+    android:layout_height="match_parent">
 
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/relay"/>
+    <!-- TODO Remove hardcoded values -->
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="85dp"
         android:layout_marginLeft="@dimen/relays_margin_left">
 
         <TextView
@@ -36,6 +34,15 @@
             android:id="@+id/relay_4"
             style="@style/Relay"/>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="@dimen/relays_margin_left">
 
         <TextView
             android:id="@+id/relay_5"
@@ -57,7 +64,5 @@
             android:id="@+id/vcc"
             style="@style/Relay"
             android:text="@string/vcc"/>
-
     </LinearLayout>
-
 </RelativeLayout>

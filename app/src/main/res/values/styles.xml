@@ -11,11 +11,11 @@
     <!-- Base application theme. -->
     <style name="Relay" parent="AppTheme">
         <item name="android:layout_width">100dp</item>
-        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_margin">13dp</item>
     </style>
 
 </resources>

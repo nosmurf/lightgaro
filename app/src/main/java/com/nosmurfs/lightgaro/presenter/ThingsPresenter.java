@@ -1,17 +1,13 @@
 package com.nosmurfs.lightgaro.presenter;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManagerService;
-import com.nosmurfs.lightgaro.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * Created by Sergio on 11/01/2017.
@@ -24,30 +20,6 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private static final int MAX_RELAYS = 8;
 
     private List<Gpio> relays;
-
-    @BindView(R.id.relay_1)
-    TextView relay1;
-
-    @BindView(R.id.relay_2)
-    TextView relay2;
-
-    @BindView(R.id.relay_3)
-    TextView relay3;
-
-    @BindView(R.id.relay_4)
-    TextView relay4;
-
-    @BindView(R.id.relay_5)
-    TextView relay5;
-
-    @BindView(R.id.relay_6)
-    TextView relay6;
-
-    @BindView(R.id.relay_7)
-    TextView relay7;
-
-    @BindView(R.id.relay_8)
-    TextView relay8;
 
     public ThingsPresenter() {
         relays = new ArrayList<>();
@@ -69,6 +41,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     }
 
     private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size) throws IOException {
+        List<String> displayNames = new ArrayList<>();
+
         for (int index = 0; index < size; index++) {
             String port = portList.get(index);
             Gpio gpio = peripheralManagerService.openGpio(port);
@@ -78,9 +52,30 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
             relays.add(gpio);
 
-            // TODO: 14/01/2017 show relays in screen for help user
-            Log.i(TAG, "initializeGpios: Relay " + index + " into " + port);
+            displayNames.add(port);
         }
+
+        if (size < MAX_RELAYS){
+            for (int index = size; index < MAX_RELAYS; index++) {
+                displayNames.add("NONE");
+            }
+        }
+
+        showConnectionInformation(displayNames);
+    }
+
+    private void showConnectionInformation(List<String> displayNames) {
+        // FIXME: 14/01/2017 Find better way
+        view.showConnectionInformation(
+                displayNames.get(0),
+                displayNames.get(1),
+                displayNames.get(2),
+                displayNames.get(3),
+                displayNames.get(4),
+                displayNames.get(5),
+                displayNames.get(6),
+                displayNames.get(7)
+        );
     }
 
     @Override
@@ -95,6 +90,17 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     }
 
     public interface View extends Presenter.View{
+        void showConnectionInformation(
+                String relay1,
+                String relay2,
+                String relay3,
+                String relay4,
+                String relay5,
+                String relay6,
+                String relay7,
+                String relay8
+        );
+
         // TODO: 11/01/2017
     }
 }
