@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Lightgaro</string>
+    <string name="gnd">GND</string>
+    <string name="vcc">Vcc</string>
 </resources>
