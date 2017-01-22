@@ -1,7 +1,5 @@
 package com.nosmurfs.lightgaro.presenter;
 
-import android.util.Log;
-
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManagerService;
 
@@ -29,18 +27,19 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     protected void initialize() {
         PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
         List<String> portList = peripheralManagerService.getGpioList();
-        if (portList.isEmpty()) {
-            Log.i(TAG, "No GPIO port available on this device.");
-        } else {
+        if (!portList.isEmpty()) {
             try {
                 initializeGpios(peripheralManagerService, portList, portList.size() < MAX_RELAYS ? portList.size() : MAX_RELAYS);
             } catch (IOException e) {
                 view.showError("An error has ocurred");
             }
+        } else {
+            view.showError("There are no available ports");
         }
     }
 
-    private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size) throws IOException {
+    private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size)
+            throws IOException {
         List<String> displayNames = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {
@@ -55,7 +54,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
             displayNames.add(port);
         }
 
-        if (size < MAX_RELAYS){
+        if (size < MAX_RELAYS) {
             for (int index = size; index < MAX_RELAYS; index++) {
                 displayNames.add("NONE");
             }
@@ -65,17 +64,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     }
 
     private void showConnectionInformation(List<String> displayNames) {
-        // FIXME: 14/01/2017 Find better way
-        view.showConnectionInformation(
-                displayNames.get(0),
-                displayNames.get(1),
-                displayNames.get(2),
-                displayNames.get(3),
-                displayNames.get(4),
-                displayNames.get(5),
-                displayNames.get(6),
-                displayNames.get(7)
-        );
+        view.showConnectionInformation(displayNames);
     }
 
     @Override
@@ -89,18 +78,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         }
     }
 
-    public interface View extends Presenter.View{
-        void showConnectionInformation(
-                String relay1,
-                String relay2,
-                String relay3,
-                String relay4,
-                String relay5,
-                String relay6,
-                String relay7,
-                String relay8
-        );
-
-        // TODO: 11/01/2017
+    public interface View extends Presenter.View {
+        void showConnectionInformation(List<String> displayNames);
     }
 }
