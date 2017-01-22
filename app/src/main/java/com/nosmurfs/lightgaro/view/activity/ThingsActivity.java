@@ -5,8 +5,10 @@ import com.nosmurfs.lightgaro.model.Relay;
 import com.nosmurfs.lightgaro.presenter.Presenter;
 import com.nosmurfs.lightgaro.presenter.ThingsPresenter;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,8 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
     private ThingsPresenter thingsPresenter;
 
     private ArrayList<TextView> relays;
+
+    private ArrayList<ImageView> relayLamps;
 
     @Override
     public int getLayoutId() {
@@ -56,6 +60,25 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
         relays.add(relay6);
         relays.add(relay7);
         relays.add(relay8);
+
+        ImageView relay1Lamp = (ImageView) findViewById(R.id.relay_1_lamp);
+        ImageView relay2Lamp = (ImageView) findViewById(R.id.relay_2_lamp);
+        ImageView relay3Lamp = (ImageView) findViewById(R.id.relay_3_lamp);
+        ImageView relay4Lamp = (ImageView) findViewById(R.id.relay_4_lamp);
+        ImageView relay5Lamp = (ImageView) findViewById(R.id.relay_5_lamp);
+        ImageView relay6Lamp = (ImageView) findViewById(R.id.relay_6_lamp);
+        ImageView relay7Lamp = (ImageView) findViewById(R.id.relay_7_lamp);
+        ImageView relay8Lamp = (ImageView) findViewById(R.id.relay_8_lamp);
+
+        relayLamps = new ArrayList<>();
+        relayLamps.add(relay1Lamp);
+        relayLamps.add(relay2Lamp);
+        relayLamps.add(relay3Lamp);
+        relayLamps.add(relay4Lamp);
+        relayLamps.add(relay5Lamp);
+        relayLamps.add(relay6Lamp);
+        relayLamps.add(relay7Lamp);
+        relayLamps.add(relay8Lamp);
     }
 
     @Override
@@ -71,8 +94,14 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
 
     @Override
     public void showConnectionInformation(List<Relay> relayNames) {
-        for (int index = 0; index < this.relays.size(); index++) {
-            this.relays.get(index).setText(relayNames.get(index).getLabel());
+        try {
+            for (int index = 0; index < this.relays.size(); index++) {
+                Relay relay = relayNames.get(index);
+                this.relays.get(index).setText(relay.getLabel());
+                this.relayLamps.get(index).setBackgroundResource(relay.getGpio().getValue() ? R.drawable.on : R.drawable.off);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

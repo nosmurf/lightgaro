@@ -80,6 +80,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        view.showConnectionInformation(relays);
     }
 
     private void initializeFirebase() {

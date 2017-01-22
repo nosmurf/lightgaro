@@ -45,7 +45,7 @@
                 android:id="@+id/relay_1_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -65,7 +65,7 @@
                 android:id="@+id/relay_2_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -85,7 +85,7 @@
                 android:id="@+id/relay_3_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -105,7 +105,7 @@
                 android:id="@+id/relay_4_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -139,7 +139,7 @@
                 android:id="@+id/relay_5_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -159,7 +159,7 @@
                 android:id="@+id/relay_6_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -179,7 +179,7 @@
                 android:id="@+id/relay_7_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
@@ -200,7 +200,7 @@
                 android:id="@+id/relay_8_lamp"
                 android:layout_width="@dimen/lamp_width"
                 android:layout_height="match_parent"
-                android:src="@drawable/off" />
+                android:background="@drawable/off" />
         </LinearLayout>
 
         <LinearLayout
