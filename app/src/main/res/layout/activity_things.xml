@@ -151,7 +151,8 @@
 
             <TextView
                 android:id="@+id/vcc"
-                style="@style/Relay" />
+                style="@style/Relay"
+                android:text="@string/vcc"/>
 
             <ImageView
                 android:layout_width="fill_parent"
