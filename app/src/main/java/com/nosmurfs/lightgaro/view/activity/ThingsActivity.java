@@ -72,7 +72,7 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
     @Override
     public void showConnectionInformation(List<Relay> relayNames) {
         for (int index = 0; index < this.relays.size(); index++) {
-            this.relays.get(0).setText(relayNames.get(index).getLabel());
+            this.relays.get(index).setText(relayNames.get(index).getLabel());
         }
     }
 }

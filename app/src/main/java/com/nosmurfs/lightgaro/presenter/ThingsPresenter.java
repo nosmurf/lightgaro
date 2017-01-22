@@ -2,6 +2,9 @@ package com.nosmurfs.lightgaro.presenter;
 
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManagerService;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -23,6 +26,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private List<Relay> relays;
 
+    private DatabaseReference relaysReference;
+
     public ThingsPresenter() {
         relays = new ArrayList<>();
     }
@@ -31,12 +36,56 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     protected void initialize() {
         initializeHardware();
         initializeFirebase();
+        listenForChanges();
+    }
+
+    private void listenForChanges() {
+        if (relaysReference != null) {
+            relaysReference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    // Do nothing
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    switchRelay(dataSnapshot.getKey(), (Boolean) dataSnapshot.getValue());
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    // Do nothing
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    // Do nothing
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Do nothing
+                }
+            });
+        }
+    }
+
+    private void switchRelay(String key, Boolean value) {
+        try {
+            for (Relay relay : relays) {
+                if (relay.getLabel().equals(key)) {
+                    relay.getGpio().setValue(value);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initializeFirebase() {
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference relaysReference = database.getReference("relay");
+        relaysReference = database.getReference("relay");
 
         try {
             for (Relay relay : relays) {
