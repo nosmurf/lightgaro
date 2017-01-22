@@ -2,6 +2,10 @@ package com.nosmurfs.lightgaro.presenter;
 
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManagerService;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import com.nosmurfs.lightgaro.model.Relay;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private static final int MAX_RELAYS = 8;
 
-    private List<Gpio> relays;
+    private List<Relay> relays;
 
     public ThingsPresenter() {
         relays = new ArrayList<>();
@@ -25,6 +29,25 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     @Override
     protected void initialize() {
+        initializeHardware();
+        initializeFirebase();
+    }
+
+    private void initializeFirebase() {
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference relaysReference = database.getReference("relay");
+
+        try {
+            for (Relay relay : relays) {
+                relaysReference.child(relay.getLabel()).setValue(relay.getGpio().getValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeHardware() {
         PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
         List<String> portList = peripheralManagerService.getGpioList();
         if (!portList.isEmpty()) {
@@ -40,7 +63,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size)
             throws IOException {
-        List<String> displayNames = new ArrayList<>();
+        relays = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {
             String port = portList.get(index);
@@ -49,29 +72,23 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
             gpio.setActiveType(Gpio.ACTIVE_LOW);
             gpio.setValue(true);
 
-            relays.add(gpio);
-
-            displayNames.add(port);
+            relays.add(new Relay(gpio, port));
         }
 
         if (size < MAX_RELAYS) {
             for (int index = size; index < MAX_RELAYS; index++) {
-                displayNames.add("NONE");
+                relays.add(new Relay(null, "NONE"));
             }
         }
 
-        showConnectionInformation(displayNames);
-    }
-
-    private void showConnectionInformation(List<String> displayNames) {
-        view.showConnectionInformation(displayNames);
+        view.showConnectionInformation(relays);
     }
 
     @Override
     public void destroy() {
         try {
-            for (Gpio relay : relays) {
-                relay.close();
+            for (Relay relay : relays) {
+                relay.getGpio().close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,6 +96,6 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     }
 
     public interface View extends Presenter.View {
-        void showConnectionInformation(List<String> displayNames);
+        void showConnectionInformation(List<Relay> relays);
     }
 }
