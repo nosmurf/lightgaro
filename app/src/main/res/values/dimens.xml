@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="relays_margin_left">36dp</dimen>
-    <dimen name="relay_width">600dp</dimen>
+    <dimen name="relay_width">500dp</dimen>
+    <dimen name="lamp_width">80dp</dimen>
+    <dimen name="relay_name_width">100dp</dimen>
 </resources>

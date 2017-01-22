@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "24833289121",
+    "firebase_url": "https://lightgaro-3a4cc.firebaseio.com",
+    "project_id": "lightgaro-3a4cc",
+    "storage_bucket": "lightgaro-3a4cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24833289121:android:110e821c243a6328",
+        "android_client_info": {
+          "package_name": "com.nosmurfs.lightgaro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24833289121-69adehqm74p31lguk3s6gr90ck54rn7n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nosmurfs.lightgaro",
+            "certificate_hash": "4EE3E9A36583D9294B6F3F187B1FFDBEE288BB3F"
+          }
+        },
+        {
+          "client_id": "24833289121-q7b8uonopmbkf85a5tt4a5h948neip6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzVkWDKIC2x_87dISrYnFtjd9dAZMypfs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24833289121-q7b8uonopmbkf85a5tt4a5h948neip6b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

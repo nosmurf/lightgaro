@@ -10,7 +10,7 @@
 
     <!-- Base application theme. -->
     <style name="Relay" parent="AppTheme">
-        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_width">@dimen/relay_name_width</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">20sp</item>
         <item name="android:gravity">center</item>
