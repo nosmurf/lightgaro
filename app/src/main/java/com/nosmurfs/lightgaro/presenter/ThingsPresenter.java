@@ -8,8 +8,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.nosmurfs.lightgaro.model.DeviceDto;
 import com.nosmurfs.lightgaro.model.Relay;
 import com.nosmurfs.lightgaro.model.RelayDto;
+import com.nosmurfs.lightgaro.model.UserDto;
 import com.nosmurfs.lightgaro.persistence.LightgaroPersistence;
 import com.nosmurfs.lightgaro.persistence.Persistence;
 import com.nosmurfs.lightgaro.util.UniqueIdGenerator;
@@ -30,7 +32,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private List<Relay> relays;
 
-    private DatabaseReference relaysReference;
+    private DatabaseReference deviceReference;
 
     private Persistence persistence;
 
@@ -48,7 +50,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         initializeUniqueId();
         initializeHardware();
         initializeFirebase();
-        listenForChanges();
+        //listenForChanges();
     }
 
     private void initializeUniqueId() {
@@ -95,21 +97,27 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private void initializeFirebase() {
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        relaysReference = database.getReference(uniqueId);
+        deviceReference = database.getReference(uniqueId);
+
+        DeviceDto deviceDto = new DeviceDto();
+        deviceDto.setUser(new UserDto(false));
+        deviceDto.setUniqueId(uniqueId);
+        deviceReference.setValue(deviceDto);
 
         try {
             for (Relay relay : relays) {
                 RelayDto relayDto = new RelayDto(relay.getLabel(), relay.getGpio().getValue());
-                relaysReference.child(relay.getId()).setValue(relayDto);
+                deviceReference.child("relay").child(relay.getId()).setValue(relayDto);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void listenForChanges() {
-        if (relaysReference != null) {
-            relaysReference.addChildEventListener(new ChildEventListener() {
+        if (deviceReference != null) {
+            deviceReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);

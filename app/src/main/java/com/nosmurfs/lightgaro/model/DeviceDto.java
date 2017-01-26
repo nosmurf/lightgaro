@@ -1,7 +1,5 @@
 package com.nosmurfs.lightgaro.model;
 
-import java.util.List;
-
 /**
  * Created by Sergio on 26/01/2017.
  */
@@ -9,7 +7,21 @@ import java.util.List;
 public class DeviceDto {
     private String uniqueId;
 
-    private List<RelayDto> relays;
-
     private UserDto user;
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public UserDto getUser() {
+        return user;
+    }
+
+    public void setUser(UserDto user) {
+        this.user = user;
+    }
 }
