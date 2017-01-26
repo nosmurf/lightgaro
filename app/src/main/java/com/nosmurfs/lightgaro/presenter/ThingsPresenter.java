@@ -39,12 +39,63 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         listenForChanges();
     }
 
+    private void initializeHardware() {
+        PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
+        List<String> portList = peripheralManagerService.getGpioList();
+        if (!portList.isEmpty()) {
+            try {
+                initializeGpios(peripheralManagerService, portList, portList.size() < MAX_RELAYS ? portList.size() : MAX_RELAYS);
+            } catch (IOException e) {
+                view.showError("An error has ocurred");
+            }
+        } else {
+            view.showError("There are no available ports");
+        }
+    }
+
+    private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size)
+            throws IOException {
+        relays = new ArrayList<>();
+
+        for (int index = 0; index < size; index++) {
+            String port = portList.get(index);
+            Gpio gpio = peripheralManagerService.openGpio(port);
+            gpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
+            gpio.setActiveType(Gpio.ACTIVE_LOW);
+            gpio.setValue(true);
+
+            relays.add(new Relay(gpio, port));
+        }
+
+        if (size < MAX_RELAYS) {
+            for (int index = size; index < MAX_RELAYS; index++) {
+                relays.add(new Relay(null, "NONE"));
+            }
+        }
+
+        view.showConnectionInformation(relays);
+    }
+
+    private void initializeFirebase() {
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        relaysReference = database.getReference("relay");
+
+        try {
+            for (Relay relay : relays) {
+                relaysReference.child(relay.getLabel()).setValue(relay.getGpio().getValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listenForChanges() {
         if (relaysReference != null) {
             relaysReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    // Do nothing
+                    switchRelay(dataSnapshot.getKey(), (Boolean) dataSnapshot.getValue());
                 }
 
                 @Override
@@ -80,57 +131,6 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        view.showConnectionInformation(relays);
-    }
-
-    private void initializeFirebase() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        relaysReference = database.getReference("relay");
-
-        try {
-            for (Relay relay : relays) {
-                relaysReference.child(relay.getLabel()).setValue(relay.getGpio().getValue());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initializeHardware() {
-        PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
-        List<String> portList = peripheralManagerService.getGpioList();
-        if (!portList.isEmpty()) {
-            try {
-                initializeGpios(peripheralManagerService, portList, portList.size() < MAX_RELAYS ? portList.size() : MAX_RELAYS);
-            } catch (IOException e) {
-                view.showError("An error has ocurred");
-            }
-        } else {
-            view.showError("There are no available ports");
-        }
-    }
-
-    private void initializeGpios(PeripheralManagerService peripheralManagerService, List<String> portList, int size)
-            throws IOException {
-        relays = new ArrayList<>();
-
-        for (int index = 0; index < size; index++) {
-            String port = portList.get(index);
-            Gpio gpio = peripheralManagerService.openGpio(port);
-            gpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-            gpio.setActiveType(Gpio.ACTIVE_LOW);
-            gpio.setValue(true);
-
-            relays.add(new Relay(gpio, port));
-        }
-
-        if (size < MAX_RELAYS) {
-            for (int index = size; index < MAX_RELAYS; index++) {
-                relays.add(new Relay(null, "NONE"));
-            }
-        }
-
         view.showConnectionInformation(relays);
     }
 
