@@ -10,6 +10,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import com.nosmurfs.lightgaro.model.Relay;
 import com.nosmurfs.lightgaro.model.RelayDto;
+import com.nosmurfs.lightgaro.util.UniqueIdGenerator;
+
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +38,9 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     @Override
     protected void initialize() {
+
+        Log.i(TAG, "initialize: " + UniqueIdGenerator.generate());
+
         initializeHardware();
         initializeFirebase();
         listenForChanges();
