@@ -10,9 +10,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import com.nosmurfs.lightgaro.model.Relay;
 import com.nosmurfs.lightgaro.model.RelayDto;
+import com.nosmurfs.lightgaro.persistence.LightgaroPersistence;
+import com.nosmurfs.lightgaro.persistence.Persistence;
 import com.nosmurfs.lightgaro.util.UniqueIdGenerator;
-
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,18 +32,27 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private DatabaseReference relaysReference;
 
+    private Persistence persistence;
+
+    private String uniqueId;
+
     public ThingsPresenter() {
         relays = new ArrayList<>();
     }
 
     @Override
     protected void initialize() {
+        // TODO: 26/01/2017 Resolve this with DI
+        persistence = new LightgaroPersistence(view.getContext());
 
-        Log.i(TAG, "initialize: " + UniqueIdGenerator.generate());
-
+        initializeUniqueId();
         initializeHardware();
         initializeFirebase();
         listenForChanges();
+    }
+
+    private void initializeUniqueId() {
+        uniqueId = persistence.hasUniqueId() ? persistence.getUniqueId() : UniqueIdGenerator.generate();
     }
 
     private void initializeHardware() {
@@ -86,7 +95,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private void initializeFirebase() {
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        relaysReference = database.getReference("relay");
+        relaysReference = database.getReference(uniqueId);
 
         try {
             for (Relay relay : relays) {
