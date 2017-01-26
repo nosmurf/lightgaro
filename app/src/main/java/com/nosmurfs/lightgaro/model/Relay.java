@@ -11,6 +11,8 @@ public class Relay {
 
     private String label;
 
+    private String id;
+
     public Relay() {
         super();
     }
@@ -18,6 +20,12 @@ public class Relay {
     public Relay(Gpio gpio, String label) {
         this.gpio = gpio;
         this.label = label;
+    }
+
+    public Relay(Gpio gpio, String label, String id) {
+        this.gpio = gpio;
+        this.label = label;
+        this.id = id;
     }
 
     public Gpio getGpio() {
@@ -34,5 +42,13 @@ public class Relay {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

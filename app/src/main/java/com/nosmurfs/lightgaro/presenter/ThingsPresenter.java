@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import com.nosmurfs.lightgaro.model.Relay;
+import com.nosmurfs.lightgaro.model.RelayDto;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
             gpio.setActiveType(Gpio.ACTIVE_LOW);
             gpio.setValue(true);
 
-            relays.add(new Relay(gpio, port));
+            relays.add(new Relay(gpio, port, port));
         }
 
         if (size < MAX_RELAYS) {
@@ -83,7 +84,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
         try {
             for (Relay relay : relays) {
-                relaysReference.child(relay.getLabel()).setValue(relay.getGpio().getValue());
+                RelayDto relayDto = new RelayDto(relay.getLabel(), relay.getGpio().getValue());
+                relaysReference.child(relay.getId()).setValue(relayDto);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,12 +97,14 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
             relaysReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    switchRelay(dataSnapshot.getKey(), (Boolean) dataSnapshot.getValue());
+                    RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
+                    switchRelay(dataSnapshot.getKey(), relayDto.isValue());
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    switchRelay(dataSnapshot.getKey(), (Boolean) dataSnapshot.getValue());
+                    RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
+                    switchRelay(dataSnapshot.getKey(), relayDto.isValue());
                 }
 
                 @Override
@@ -124,7 +128,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private void switchRelay(String key, Boolean value) {
         try {
             for (Relay relay : relays) {
-                if (relay.getLabel().equals(key)) {
+                if (relay.getId().equals(key)) {
                     relay.getGpio().setValue(value);
                 }
             }
