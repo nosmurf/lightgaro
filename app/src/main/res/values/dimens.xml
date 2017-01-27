@@ -4,4 +4,5 @@
     <dimen name="relay_width">500dp</dimen>
     <dimen name="lamp_width">40dp</dimen>
     <dimen name="relay_name_width">100dp</dimen>
+    <dimen name="qr_size">200dp</dimen>
 </resources>

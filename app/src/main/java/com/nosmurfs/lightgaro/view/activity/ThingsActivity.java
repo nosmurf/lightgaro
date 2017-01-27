@@ -1,5 +1,6 @@
 package com.nosmurfs.lightgaro.view.activity;
 
+import com.bumptech.glide.Glide;
 import com.nosmurfs.lightgaro.R;
 import com.nosmurfs.lightgaro.model.Relay;
 import com.nosmurfs.lightgaro.presenter.Presenter;
@@ -24,6 +25,8 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
     private ArrayList<TextView> relays;
 
     private ArrayList<ImageView> relayLamps;
+
+    private ImageView qrCode;
 
     @Override
     public int getLayoutId() {
@@ -79,6 +82,8 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
         relayLamps.add(relay6Lamp);
         relayLamps.add(relay7Lamp);
         relayLamps.add(relay8Lamp);
+
+        qrCode = (ImageView) findViewById(R.id.qr_code);
     }
 
     @Override
@@ -103,5 +108,12 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void displayUniqueId(String uniqueId) {
+        Glide.with(this)
+                .load("https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + uniqueId)
+                .into(qrCode);
     }
 }

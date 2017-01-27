@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import com.nosmurfs.lightgaro.model.DeviceDto;
 import com.nosmurfs.lightgaro.model.Relay;
@@ -15,6 +16,8 @@ import com.nosmurfs.lightgaro.model.UserDto;
 import com.nosmurfs.lightgaro.persistence.LightgaroPersistence;
 import com.nosmurfs.lightgaro.persistence.Persistence;
 import com.nosmurfs.lightgaro.util.UniqueIdGenerator;
+
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private static final String RELAY_KEY = "relay";
 
+    private static final String USER_KEY = "user";
+
     private List<Relay> relays;
 
     private DatabaseReference deviceReference;
@@ -41,6 +46,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private Persistence persistence;
 
     private String uniqueId;
+
+    private DatabaseReference userReference;
 
     public ThingsPresenter() {
         relays = new ArrayList<>();
@@ -56,6 +63,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         initializeHardware();
         createDeviceInFirebase();
         listenForChanges();
+        listenForLogin();
     }
 
 
@@ -65,6 +73,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         } else {
             uniqueId = UniqueIdGenerator.generate();
         }
+        view.displayUniqueId(uniqueId);
 
     }
 
@@ -72,6 +81,7 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         deviceReference = database.getReference(uniqueId);
         relayReference = deviceReference.child(RELAY_KEY);
+        userReference = deviceReference.child(USER_KEY);
     }
 
     private void initializeHardware() {
@@ -133,34 +143,13 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private void listenForChanges() {
         if (relayReference != null) {
-            relayReference.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
-                    switchRelay(dataSnapshot.getKey(), relayDto.isValue());
-                }
+            relayReference.addChildEventListener(new RelayChangesListener());
+        }
+    }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
-                    switchRelay(dataSnapshot.getKey(), relayDto.isValue());
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    // Do nothing
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    // Do nothing
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Do nothing
-                }
-            });
+    private void listenForLogin() {
+        if (userReference != null) {
+            userReference.addValueEventListener(new UserBindedListener());
         }
     }
 
@@ -190,5 +179,48 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     public interface View extends Presenter.View {
         void showConnectionInformation(List<Relay> relays);
+
+        void displayUniqueId(String uniqueId);
+    }
+
+    private class RelayChangesListener implements ChildEventListener {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
+            switchRelay(dataSnapshot.getKey(), relayDto.isValue());
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
+            switchRelay(dataSnapshot.getKey(), relayDto.isValue());
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            // Do nothing
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            // Do nothing
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Do nothing
+        }
+    }
+
+    private class UserBindedListener implements ValueEventListener {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Log.i(TAG, "onDataChange: " + dataSnapshot.toString());
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // TODO: 27/01/2017 display error
+        }
     }
 }
