@@ -17,8 +17,6 @@ import com.nosmurfs.lightgaro.persistence.LightgaroPersistence;
 import com.nosmurfs.lightgaro.persistence.Persistence;
 import com.nosmurfs.lightgaro.util.UniqueIdGenerator;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -181,6 +179,8 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         void showConnectionInformation(List<Relay> relays);
 
         void displayUniqueId(String uniqueId);
+
+        void showUserUI(String email, String name, String imageUrl);
     }
 
     private class RelayChangesListener implements ChildEventListener {
@@ -215,7 +215,10 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
     private class UserBindedListener implements ValueEventListener {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            Log.i(TAG, "onDataChange: " + dataSnapshot.toString());
+            UserDto userDto = dataSnapshot.getValue(UserDto.class);
+            if (userDto.isBinded()) {
+                view.showUserUI(userDto.getEmail(), userDto.getName(), userDto.getImageUrl());
+            }
         }
 
         @Override

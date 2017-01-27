@@ -13,6 +13,10 @@ public class UserDto {
 
     private boolean binded;
 
+    public UserDto() {
+        super();
+    }
+
     public UserDto(boolean binded) {
         this.binded = binded;
     }

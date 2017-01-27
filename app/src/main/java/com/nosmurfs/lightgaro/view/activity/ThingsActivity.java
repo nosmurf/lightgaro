@@ -28,6 +28,10 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
 
     private ImageView qrCode;
 
+    private TextView name;
+
+    private TextView email;
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_things;
@@ -84,6 +88,9 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
         relayLamps.add(relay8Lamp);
 
         qrCode = (ImageView) findViewById(R.id.qr_code);
+
+        name = (TextView) findViewById(R.id.name);
+        email = (TextView) findViewById(R.id.email);
     }
 
     @Override
@@ -115,5 +122,15 @@ public class ThingsActivity extends RootActivity implements ThingsPresenter.View
         Glide.with(this)
                 .load("https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + uniqueId)
                 .into(qrCode);
+    }
+
+    @Override
+    public void showUserUI(String email, String name, String imageUrl) {
+        Glide.with(this)
+                .load(imageUrl)
+                .into(qrCode);
+
+        this.name.setText("Logged as " + name);
+        this.email.setText(email);
     }
 }
