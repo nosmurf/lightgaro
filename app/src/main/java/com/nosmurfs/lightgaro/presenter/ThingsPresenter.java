@@ -30,9 +30,13 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
 
     private static final int MAX_RELAYS = 8;
 
+    private static final String RELAY_KEY = "relay";
+
     private List<Relay> relays;
 
     private DatabaseReference deviceReference;
+
+    private DatabaseReference relayReference;
 
     private Persistence persistence;
 
@@ -48,13 +52,26 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         persistence = new LightgaroPersistence(view.getContext());
 
         initializeUniqueId();
-        initializeHardware();
         initializeFirebase();
-        //listenForChanges();
+        initializeHardware();
+        createDeviceInFirebase();
+        listenForChanges();
     }
 
+
     private void initializeUniqueId() {
-        uniqueId = persistence.hasUniqueId() ? persistence.getUniqueId() : UniqueIdGenerator.generate();
+        if (persistence.hasUniqueId()) {
+            uniqueId = persistence.getUniqueId();
+        } else {
+            uniqueId = UniqueIdGenerator.generate();
+        }
+
+    }
+
+    private void initializeFirebase() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        deviceReference = database.getReference(uniqueId);
+        relayReference = deviceReference.child(RELAY_KEY);
     }
 
     private void initializeHardware() {
@@ -94,30 +111,29 @@ public class ThingsPresenter extends Presenter<ThingsPresenter.View> {
         view.showConnectionInformation(relays);
     }
 
-    private void initializeFirebase() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        deviceReference = database.getReference(uniqueId);
+    private void createDeviceInFirebase() {
+        if (!persistence.hasUniqueId()) {
+            persistence.saveUniqueId(uniqueId);
 
-        DeviceDto deviceDto = new DeviceDto();
-        deviceDto.setUser(new UserDto(false));
-        deviceDto.setUniqueId(uniqueId);
-        deviceReference.setValue(deviceDto);
+            DeviceDto deviceDto = new DeviceDto();
+            deviceDto.setUser(new UserDto(false));
+            deviceDto.setUniqueId(uniqueId);
+            deviceReference.setValue(deviceDto);
 
-        try {
-            for (Relay relay : relays) {
-                RelayDto relayDto = new RelayDto(relay.getLabel(), relay.getGpio().getValue());
-                deviceReference.child("relay").child(relay.getId()).setValue(relayDto);
+            try {
+                for (Relay relay : relays) {
+                    RelayDto relayDto = new RelayDto(relay.getLabel(), relay.getGpio().getValue());
+                    relayReference.child(relay.getId()).setValue(relayDto);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
     }
 
     private void listenForChanges() {
-        if (deviceReference != null) {
-            deviceReference.addChildEventListener(new ChildEventListener() {
+        if (relayReference != null) {
+            relayReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     RelayDto relayDto = dataSnapshot.getValue(RelayDto.class);
